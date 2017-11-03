@@ -1,9 +1,21 @@
-import { NgModule, ApplicationRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { RouterModule } from '@angular/router';
-import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
+import {
+  NgModule,
+  ApplicationRef
+} from '@angular/core';
+import {
+  removeNgStyles,
+  createNewHosts,
+  createInputTransfer
+} from '@angularclass/hmr';
+import {
+  RouterModule,
+  PreloadAllModules
+} from '@angular/router';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 /*
  * Platform and Environment providers/directives/pipes
@@ -11,20 +23,24 @@ import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularcla
 import { ENV_PROVIDERS } from './environment';
 import { ROUTES } from './app.routes';
 // App is our top level component
-import { App } from './app.component';
+import { AppComponent } from './app.component';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
-import { AppState, InteralStateType } from './app.service';
-import { Home } from './home';
-import { About } from './about';
+import { AppState, InternalStateType } from './app.service';
+import { HomeComponent } from './home';
+import { AboutComponent } from './about';
+import { NoContentComponent } from './no-content';
+import { XLargeDirective } from './home/x-large';
+
 import { Footer } from './controls/footer.component';
 import { Sidebar } from './menu/sidebar.component';
 import { TopNavBar } from './menu/topnavbar.component';
 import { FlotCmp } from './controls/network-activities.component'
 import { Content } from './content';
 import { Inbox } from './content';
-import { NoContent } from './no-content';
-import { XLarge } from './home/x-large';
 import { FontAwesomeDirective } from 'ng2-fontawesome';
+
+//import '../styles/styles.scss';
+//import '../styles/headings.css';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -33,7 +49,7 @@ const APP_PROVIDERS = [
 ];
 
 type StoreType = {
-  state: InteralStateType,
+  state: InternalStateType,
   restoreInputValues: () => void,
   disposeOldHosts: () => void
 };
@@ -42,41 +58,61 @@ type StoreType = {
  * `AppModule` is the main entry point into Angular2's bootstraping process
  */
 @NgModule({
-  bootstrap: [ App ],
+  bootstrap: [ AppComponent ],
   declarations: [
-    App,
-    About,
-    Home,
-    Content,
+    AppComponent,
+    AboutComponent,
+    HomeComponent,
+    NoContentComponent,
+    XLargeDirective,
+	Content,
     Inbox,
     Footer,
     Sidebar,
     TopNavBar,
     FlotCmp,
-    NoContent,
-    XLarge,
-    FontAwesomeDirective
+	FontAwesomeDirective
   ],
-  imports: [ // import Angular's modules
+  /**
+   * Import Angular's modules.
+   */
+  imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpModule,
-    RouterModule.forRoot(ROUTES, { useHash: true })
+    RouterModule.forRoot(ROUTES, {
+      useHash: Boolean(history.pushState) === false,
+      preloadingStrategy: PreloadAllModules
+    })
   ],
-  providers: [ // expose our Services and Providers into Angular's dependency injection
+  /**
+   * Expose our Services and Providers into Angular's dependency injection.
+   */
+  providers: [
     ENV_PROVIDERS,
     APP_PROVIDERS
   ]
 })
 export class AppModule {
-  constructor(public appRef: ApplicationRef, public appState: AppState) {}
 
-  hmrOnInit(store: StoreType) {
-    if (!store || !store.state) return;
+  constructor(
+    public appRef: ApplicationRef,
+    public appState: AppState
+  ) {}
+
+  public hmrOnInit(store: StoreType) {
+    if (!store || !store.state) {
+      return;
+    }
     console.log('HMR store', JSON.stringify(store, null, 2));
-    // set state
+    /**
+     * Set state
+     */
     this.appState._state = store.state;
-    // set input values
+    /**
+     * Set input values
+     */
     if ('restoreInputValues' in store) {
       let restoreInputValues = store.restoreInputValues;
       setTimeout(restoreInputValues);
@@ -87,24 +123,33 @@ export class AppModule {
     delete store.restoreInputValues;
   }
 
-  hmrOnDestroy(store: StoreType) {
-    const cmpLocation = this.appRef.components.map(cmp => cmp.location.nativeElement);
-    // save state
+  public hmrOnDestroy(store: StoreType) {
+    const cmpLocation = this.appRef.components.map((cmp) => cmp.location.nativeElement);
+    /**
+     * Save state
+     */
     const state = this.appState._state;
     store.state = state;
-    // recreate root elements
+    /**
+     * Recreate root elements
+     */
     store.disposeOldHosts = createNewHosts(cmpLocation);
-    // save input values
+    /**
+     * Save input values
+     */
     store.restoreInputValues  = createInputTransfer();
-    // remove styles
+    /**
+     * Remove styles
+     */
     removeNgStyles();
   }
 
-  hmrAfterDestroy(store: StoreType) {
-    // display new elements
+  public hmrAfterDestroy(store: StoreType) {
+    /**
+     * Display new elements
+     */
     store.disposeOldHosts();
     delete store.disposeOldHosts;
   }
 
 }
-

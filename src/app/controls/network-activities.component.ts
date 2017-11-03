@@ -91,7 +91,7 @@ export class FlotCmp {
     plot()
     {     
         let plotArea = $(this.el.nativeElement).find('div');
-        $.plot( plotArea, [this.data1,this.data2], this.options);
+        //$.plot( plotArea, [this.data1,this.data2], this.options);
     }   
 
     private gd(year, month, day) {

@@ -226,6 +226,7 @@ module.exports = function (options) {
       port: METADATA.port,
       host: METADATA.host,
       hot: METADATA.HMR,
+      disableHostCheck: true,
       public: METADATA.public,
       historyApiFallback: true,
       watchOptions: {

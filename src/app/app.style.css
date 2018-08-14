@@ -1,3 +1,7 @@
+/*
+bsurnida 20180814 - This first part is the css from daterangepicker.scss of gentelella
+gentelella\src\scss\daterangepicker.scss
+*/
 
 html , body{
 	
@@ -143,6 +147,12 @@ html , body{
 .calendar-exibit .calendar-table {
     padding: 0 0 4px 0
 }
+
+/*
+bsurnida 20180814 - This second part is the css from custom.scss of gentelella
+gentelella\src\scss\custom.scss
+*/
+
 .left_col {
     background: #2A3F54
 }
@@ -2730,7 +2740,7 @@ ul.social li {
 }
 .dashboard_graph .x_title h3 {
     margin: 0;
-    font-weight: normal
+    font-weight: 400; /*bsurnida 20180814 - changed from normal to 400 to match colorlib/gentelella demo*/
 }
 .chart {
     position: relative;
